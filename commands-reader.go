@@ -48,8 +48,10 @@ func (cr CommandsReader) nextCommand() ([]byte, error) {
 		return nil, fmt.Errorf("Invalid command: %v", line)
 	}
 	op := line[0:3]
-	if bytes.Equal(op, []byte("MSG")) || bytes.Equal(op, []byte("PUB")) {
-		msg = line[:]
+	switch {
+	case bytes.Equal(op, []byte("MSG")),
+		bytes.Equal(op, []byte("PUB")):
+		// msg = line[:]
 		splitted := bytes.Split(line, []byte(" "))
 		sizeStr := splitted[len(splitted)-1]
 		sizeStr = sizeStr[:len(sizeStr)-2]
@@ -70,8 +72,10 @@ func (cr CommandsReader) nextCommand() ([]byte, error) {
 			return nil, fmt.Errorf(
 				"Error reading %s payload. Got %d extra bytes", op, -size-2)
 		}
-	} else {
+	case bytes.Equal(op, []byte("+OK")):
+	default:
 		msg = line
 	}
+
 	return msg, nil
 }

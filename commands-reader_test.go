@@ -11,6 +11,7 @@ func TestCommandsReader(t *testing.T) {
 	for _, tt := range []struct {
 		name     string
 		commands []string
+		expected []string
 		err      string
 	}{
 		{
@@ -21,6 +22,12 @@ func TestCommandsReader(t *testing.T) {
 				"MSG test 1 3\r\n1\r\n\r\n",
 				"PUB test 3\r\n1\r\n\r\n",
 			},
+			expected: []string{
+				"INFO {}\r\n",
+				"123\r\n",
+				"1\r\n\r\n",
+				"1\r\n\r\n",
+			},
 		},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
@@ -29,7 +36,7 @@ func TestCommandsReader(t *testing.T) {
 				buf.WriteString(s)
 			}
 			reader := NewCommandsReader(&buf)
-			for _, expected := range tt.commands {
+			for _, expected := range tt.expected {
 				next, err := reader.nextCommand()
 				if err != nil {
 					t.Fatal(err)

@@ -119,6 +119,10 @@ func (gw *Gateway) natsToWsWorker(messageType int, ws *websocket.Conn, src Comma
 			gw.onError(err)
 			return
 		}
+		// ignore, continue
+		if cmd == nil {
+			continue
+		}
 		if gw.settings.Trace {
 			fmt.Println("[TRACE] <--", string(cmd))
 		}
