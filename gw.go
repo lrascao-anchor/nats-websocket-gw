@@ -165,6 +165,9 @@ func (gw *Gateway) Handler(w http.ResponseWriter, r *http.Request) {
 	if gw.settings.WSUpgrader != nil {
 		upgrader = *gw.settings.WSUpgrader
 	}
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 	wsConn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		gw.onError(err)
